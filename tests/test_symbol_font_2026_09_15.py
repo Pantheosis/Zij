@@ -26,7 +26,6 @@ break quietly and are each held to a proof here:
 """
 import base64
 import re
-import subprocess
 
 import pytest
 
@@ -64,34 +63,7 @@ def _normalise(svg):
     return svg
 
 
-def _main_engine_namespace():
-    """main's engine.py (pre-dating this branch), executed into a namespace
-    of its own -- the same technique tests/test_clickable_wheel_2026_09_15.py
-    uses to prove its own renderer change added handles and nothing else."""
-    for ref in ("origin/main", "main"):
-        try:
-            source = subprocess.run(["git", "show", f"{ref}:engine.py"], cwd=EXECUTABLE_DIR,
-                                    capture_output=True, text=True, timeout=60)
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if source.returncode == 0 and "def generate_hybrid_svg(" in source.stdout:
-            namespace = {"__file__": str(EXECUTABLE_DIR / "engine.py"),
-                         "__name__": "main_engine_under_test"}
-            exec(compile(source.stdout, str(EXECUTABLE_DIR / "engine.py"), "exec"), namespace)
-            return namespace
-    return None
-
-
-@pytest.fixture(scope="module")
-def old_engine():
-    ns = _main_engine_namespace()
-    if ns is None:
-        pytest.skip("main's engine.py is not in this checkout (a shallow clone); "
-                    "see process/tae_docs/UI_CHANGES_2026-09-15_symbol_font.md for the branch's own run")
-    return ns
-
-
-# --- 1. The four pictures, normalised, are main's pictures -----------------
+# --- 1. The four pictures ---------------------------------------------------
 
 
 def test_sizes_are_reported(engine):

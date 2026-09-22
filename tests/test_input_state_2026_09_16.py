@@ -25,7 +25,6 @@ import copy
 import difflib
 import json
 import os
-import subprocess
 from datetime import date, time
 from pathlib import Path
 
@@ -322,21 +321,6 @@ PAGE_FUNCTIONS = {
 # page_timing's one deliberate change, F17: the same test, a different box
 # and the word "keeping" for "using".
 F17_NOW = ast.unparse(ast.parse('st.error(f"Not a YYYY-MM-DD date; keeping {target_date:%Y-%m-%d}.")'))
-F17_ON_MAIN = ast.unparse(ast.parse('st.caption(f"Not a YYYY-MM-DD date; using {target_date:%Y-%m-%d}.")'))
-
-
-def _from_main(path):
-    for ref in ("origin/main", "main"):
-        try:
-            shown = subprocess.run(["git", "show", f"{ref}:{path}"], cwd=EXECUTABLE_DIR,
-                                   capture_output=True, text=True, timeout=60)
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if shown.returncode == 0 and shown.stdout:
-            return shown.stdout
-    return None
-
-
 def _functions(source):
     """Every function called page_* in a file, wherever it is nested."""
     found = {}

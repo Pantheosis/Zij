@@ -27,9 +27,7 @@ is rendered and read here.
 from __future__ import annotations
 
 import ast
-import json
 import re
-import subprocess
 from datetime import date
 
 import pytest
@@ -87,31 +85,7 @@ def _without(rows):
     return [{k: v for k, v in r.items() if k != "Testimonies"} for r in rows]
 
 
-def _main_engine_namespace():
-    """main's engine.py, executed into a namespace of its own."""
-    for ref in ("origin/main", "main"):
-        try:
-            source = subprocess.run(["git", "show", f"{ref}:engine.py"], cwd=EXECUTABLE_DIR,
-                                    capture_output=True, text=True, timeout=60)
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if source.returncode == 0 and "def evaluate_strength_of_planets(" in source.stdout:
-            namespace = {"__file__": str(EXECUTABLE_DIR / "engine.py"),
-                         "__name__": "main_engine_under_test"}
-            exec(compile(source.stdout, str(EXECUTABLE_DIR / "engine.py"), "exec"), namespace)
-            return namespace
-    return None
-
-
-@pytest.fixture(scope="module")
-def main_engine():
-    ns = _main_engine_namespace()
-    if ns is None:
-        pytest.skip("main's engine.py is not in this checkout (a shallow clone)")
-    return ns
-
-
-# --- A. The differential: every existing key and value is main's -----------
+# --- A. The differential's shape -------------------------------------------
 
 
 def test_the_differential_covers_six_charts_and_both_evaluators():

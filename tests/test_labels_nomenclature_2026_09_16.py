@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import pathlib
 
 import pytest
 
@@ -351,3 +352,29 @@ def test_the_dead_differential_is_gone():
     assert "_main_engine_namespace" not in source
     assert "test_every_reading_and_chart_evaluates_as_main_did" not in source
     assert "process/tae_docs/ENGINE_SPLIT_2026-09-15.md" in source
+
+
+def test_no_test_compares_this_checkout_against_a_branch():
+    """No suite file may read a file out of a git ref to compare the working
+    tree with it.
+
+    Such a proof answers a question only while its own branch is open: once
+    the branch merges, the ref it reads IS the working tree and the
+    comparison is with itself. The nine of 2026-09-16 were retired for
+    failing on main after every merge; four helpers outlived them, uncalled,
+    until 2026-09-22 -- by which time the repository's history began at one
+    commit and the comparison could never have said anything at all. A
+    branch-time proof belongs in that branch's own notes, or its expected
+    value belongs in a committed fixture.
+    """
+    offenders = []
+    for path in sorted((EXECUTABLE_DIR / "tests").glob("test_*.py")):
+        source = path.read_text(encoding="utf-8")
+        if path.name == pathlib.Path(__file__).name:
+            continue
+        for ref in ('"git", "show"', "'git', 'show'", "git show "):
+            if ref in source:
+                offenders.append(f"{path.name}: {ref}")
+        if "_main_engine_namespace" in source or "_from_main" in source:
+            offenders.append(f"{path.name}: a namespace-from-main helper")
+    assert offenders == [], offenders

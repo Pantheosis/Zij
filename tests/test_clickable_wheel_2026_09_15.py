@@ -28,7 +28,6 @@ move. The click itself was measured in the browser; see
 """
 import ast
 import re
-import subprocess
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 
@@ -107,22 +106,6 @@ def _summary(engine, tables, name):
 
 
 # --- A. The renderer gained handles and nothing else ----------------------
-
-def _main_engine_namespace():
-    """main's engine.py, executed into a namespace of its own."""
-    for ref in ("origin/main", "main"):
-        try:
-            source = subprocess.run(["git", "show", f"{ref}:engine.py"], cwd=EXECUTABLE_DIR,
-                                    capture_output=True, text=True, timeout=60)
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if source.returncode == 0 and "def generate_hybrid_svg(" in source.stdout:
-            namespace = {"__file__": str(EXECUTABLE_DIR / "engine.py"),
-                         "__name__": "main_engine_under_test"}
-            exec(compile(source.stdout, str(EXECUTABLE_DIR / "engine.py"), "exec"), namespace)
-            return namespace
-    return None
-
 
 def test_the_only_added_markup_is_the_groups_and_their_data_attributes(engine):
     """Nothing but <g> elements was added, and each carries only class and
