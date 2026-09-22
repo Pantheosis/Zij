@@ -1,0 +1,14 @@
+# Runtime and test dependencies, pinned to /home/apothic/almuten_engine/.venv
+# (Python 3.14) -- the one interpreter the app and its test suite both run on.
+# Only packages the code imports directly are listed; pip resolves their
+# dependencies. The desktop/PyInstaller build needs more: see
+# requirements-desktop.txt, which includes this file.
+streamlit==1.62.0
+pyswisseph==2.10.3.2
+pandas==3.0.5
+timezonefinder==8.3.0
+pytz==2026.3.post1
+
+# Test suite (tests/): streamlit.testing.v1.AppTest, headless.
+pytest==9.1.1
+pytest-xdist==3.8.0
