@@ -1,6 +1,6 @@
 # Zīj
 
-A *zīj* is a set of astronomical tables with the rules for using them. This one is a study
+A *zīj* (زِيج) is a set of astronomical tables with the rules for using them. This one is a study
 companion for traditional natal astrology: cast a chart, then check, table by table, what the
 texts say about it.
 
