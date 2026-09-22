@@ -322,7 +322,7 @@ def reading(name):
 # rule that page text carries no build process -- and docs/RELEASING.md sets
 # it before a tag. A release's value is the tag without the 'v' (1.4.0); a
 # '-dev' suffix means a working tree between releases.
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0-dev"
 
 # Charts are saved as {name: {date_string, time_string, location_query}} in a
 # small JSON file. Only the raw natal inputs are stored -- the full chart is
